@@ -8,14 +8,17 @@ let browseDirectory = dirPath => {
     files.forEach(file => {
       fs.statSync(path.join(dirPath, file)).isDirectory()
         ? browseDirectory(path.join(dirPath, file))
-        : readFile(path.join(dirPath, file));
+        : file == "test.js" || file == "anothertest.js"
+        ? locateKeywords(path.join(dirPath, file))
+        : false;
     });
   });
 };
 
-let readFile = file => {
-  let keywordLocations = [];
-  let index = 0;
+let locateKeywords = file => {
+  let depInfos = [];
+  let keywords = ["class", "import"];
+  let data = {};
 
   const rl = readline.createInterface({
     input: fs.createReadStream(file),
@@ -24,17 +27,40 @@ let readFile = file => {
   });
 
   rl.on("line", line => {
-    index++;
-    if (line.match("class"))
-      keywordLocations.push([index, line.indexOf("class")]);
+    keywords.forEach(keyword => {
+      if ((data = getDeps(line, keyword))) depInfos.push(data);
+    });
   });
 
   rl.on("close", () => {
     console.log({
       fileName: path.basename(file),
-      keywordLocations,
+      depInfos,
     });
   });
+};
+
+let getDeps = (line, keyword) => {
+  let keyIndex = keyword;
+  if (keyword === "import") keyIndex = "from";
+
+  if (line.match(keyword)) {
+    let columnIndex = line.indexOf(keyIndex);
+    let name = line
+      .slice(columnIndex)
+      .trim()
+      .split(" ")[1]
+      .replace('("', "")
+      .replace('")', "");
+
+    name.substr("/") ? (name = path.basename(name)) : name;
+    return {
+      type: keyword,
+      name,
+    };
+  }
+
+  return false;
 };
 
 module.exports = { browseDirectory };
