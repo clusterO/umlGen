@@ -1,3 +1,6 @@
+const path = require("path");
 const myFs = require("./fs");
 
-myFs.browseDirectory(__dirname);
+myFs.browseDirectory(path.join(__dirname, "testDir")).then(msg => {
+  console.log(msg);
+});
