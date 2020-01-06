@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const readline = require("readline");
 
 let browseDirectory = dirPath => {
   fs.readdir(dirPath, (err, files) => {
@@ -13,16 +14,27 @@ let browseDirectory = dirPath => {
 };
 
 let readFile = file => {
-  fs.readFile(file, "utf8", (err, data) => {
-    if (err) console.error(err);
-    if (path.basename(file) === "test.js") locateKeyword("class", data);
-  });
-};
+  let keywordLocations = [];
+  let index = 0;
 
-let locateKeyword = (keyword, data) => {
-  console.log(data.charAt(35));
-  console.log(data.match(/\r\n/g).length);
-  console.log(data.slice(35).indexOf("\r\n"));
+  const rl = readline.createInterface({
+    input: fs.createReadStream(file),
+    output: process.stdout,
+    terminal: false,
+  });
+
+  rl.on("line", line => {
+    index++;
+    if (line.match("class"))
+      keywordLocations.push([index, line.indexOf("class")]);
+  });
+
+  rl.on("close", () => {
+    console.log({
+      fileName: path.basename(file),
+      keywordLocations,
+    });
+  });
 };
 
 module.exports = { browseDirectory };
