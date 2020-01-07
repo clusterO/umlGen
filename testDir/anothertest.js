@@ -1,5 +1,4 @@
-import test from ("./test/test/somefile")
-import react from ("react")
+import react from ("jeje")
 
 export default class sosp {
   hello world
