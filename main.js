@@ -1,19 +1,15 @@
 const path = require("path");
 const http = require("http");
 const fs = require("fs");
-const myFs = require("./fs");
+const myfs = require("./fs");
 const draw = require("./draw");
 
-myFs.browseDirectory(path.join(__dirname, "testDir")).then(data => {
+myfs.browseDirectory(path.join(__dirname, "testDir")).then(data => {
   let graph = draw.extractData(data);
-  //draw.generateHtml(graph);
-  http
-    .createServer((req, res) => {
-      fs.readFile("./index.html", null, (err, data) => {
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.write(data);
-        res.end();
-      });
+  draw
+    .generateHtml(graph)
+    .then(() => {
+      console.log("Saved");
     })
-    .listen(8000);
+    .catch(err => console.error(err));
 });

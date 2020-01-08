@@ -1,0 +1,17 @@
+.node {
+  fill: #fdd;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+.label {
+  pointer-events: none;
+  font: 10px sans-serif;
+  fill: royalblue;
+  font-weight: bold;
+}
+
+.link {
+  stroke-width: 1px;
+  stroke: #ffd87a;
+}
