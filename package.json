@@ -22,7 +22,5 @@
     "url": "https://github.com/clusterO/umlGen/issues"
   },
   "homepage": "https://github.com/clusterO/umlGen#readme",
-  "dependencies": {
-    "d3": "^6.2.0"
-  }
+  "dependencies": {}
 }
