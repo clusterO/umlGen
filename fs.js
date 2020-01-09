@@ -24,7 +24,14 @@ let browseDirectory = dirPath => {
 
 let locateKeywords = file => {
   let depInfos = [];
-  let keywords = ["class", "import"];
+  let keywords = [
+    "class",
+    "import",
+    "require",
+    "function",
+    "extends",
+    "implements",
+  ];
 
   const rl = readline.createInterface({
     input: fs.createReadStream(file),
@@ -53,24 +60,85 @@ let locateKeywords = file => {
 };
 
 let getDeps = (line, keyword) => {
-  let keyIndex = keyword;
-  if (keyword === "import") keyIndex = "from";
-
   return new Promise(resolve => {
-    if (line.match(keyword)) {
-      let columnIndex = line.indexOf(keyIndex);
-      let name = line
-        .slice(columnIndex)
-        .trim()
-        .split(" ")[1]
-        .replace('("', "")
-        .replace('")', "");
+    switch (keyword) {
+      case "class":
+        if (line.match(keyword)) {
+          let columnIndex = line.indexOf(keyword);
+          let name = line.slice(columnIndex).trim().split(" ")[1];
+          resolve({
+            type: keyword,
+            name,
+          });
+        }
+        break;
+      case "import":
+        if (line.match(keyword)) {
+          let columnIndex = line.indexOf("from");
+          let name = line
+            .slice(columnIndex)
+            .trim()
+            .split(" ")[1]
+            .replace('"', "");
 
-      name.substr("/") ? (name = path.basename(name)) : name;
-      resolve({
-        type: keyword,
-        name,
-      });
+          name.substr("/") ? (name = path.basename(name)) : name;
+
+          resolve({
+            type: keyword,
+            name,
+          });
+        }
+        break;
+      case "require":
+        if (line.match(keyword)) {
+          let columnIndex = line.indexOf(keyword);
+          let name = line.slice(columnIndex).trim().split('"')[1];
+
+          name.slice(0, name.indexOf('"'));
+
+          name.substr("/") ? (name = path.basename(name)) : name;
+
+          resolve({
+            type: keyword,
+            name,
+          });
+        }
+        break;
+      case "function":
+        if (line.match(/\(*\) {/) || line.match(/\(*\) => {/)) {
+          let name = line.trim().split(" ")[0];
+
+          if (name !== "function")
+            resolve({
+              type: keyword,
+              name,
+            });
+        }
+        break;
+      case "extends":
+        if (line.match(keyword)) {
+          let columnIndex = line.indexOf(keyword);
+          let name = line.slice(columnIndex).trim().split(" ")[1];
+
+          resolve({
+            type: keyword,
+            name,
+          });
+        }
+        break;
+      case "implements":
+        if (line.match(keyword)) {
+          let columnIndex = line.indexOf(keyword);
+          let name = line.slice(columnIndex).trim().split(" ")[1];
+
+          resolve({
+            type: keyword,
+            name,
+          });
+        }
+        break;
+      default:
+        break;
     }
   });
 };

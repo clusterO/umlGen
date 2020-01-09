@@ -1,4 +1,4 @@
-let links = [{"source":"anothertest","target":"jeje"},{"source":"test","target":"anothertest"},{"source":"test","target":"jeje"}]; 
+let links = [{"source":"main","target":"react"},{"source":"react","target":"main"},{"source":"react","target":"http"},{"source":"http","target":"\"fs\""},{"source":"http","target":"path"}]; 
 let width = 960,
   height = 500;
 

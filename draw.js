@@ -8,7 +8,7 @@ let extractData = depGraph => {
     let fileName = element.fileName.split(".")[0];
     nodes.push({ name: fileName });
     element.depInfos.forEach(dep => {
-      if (dep.type === "import")
+      if (dep.type === "import" || dep.type === "require")
         links.push({
           source: fileName,
           target: dep.name,
