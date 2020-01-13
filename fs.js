@@ -79,10 +79,8 @@ let getDeps = (line, keyword) => {
             .slice(columnIndex)
             .trim()
             .split(" ")[1]
-            .replace('"', "");
-
+            .replace(/\(?"\)?;?/g, "");
           name.substr("/") ? (name = path.basename(name)) : name;
-
           resolve({
             type: keyword,
             name,
@@ -93,11 +91,8 @@ let getDeps = (line, keyword) => {
         if (line.match(keyword)) {
           let columnIndex = line.indexOf(keyword);
           let name = line.slice(columnIndex).trim().split('"')[1];
-
           name.slice(0, name.indexOf('"'));
-
           name.substr("/") ? (name = path.basename(name)) : name;
-
           resolve({
             type: keyword,
             name,
@@ -107,7 +102,6 @@ let getDeps = (line, keyword) => {
       case "function":
         if (line.match(/\(*\) {/) || line.match(/\(*\) => {/)) {
           let name = line.trim().split(" ")[0];
-
           if (name !== "function")
             resolve({
               type: keyword,
@@ -119,7 +113,6 @@ let getDeps = (line, keyword) => {
         if (line.match(keyword)) {
           let columnIndex = line.indexOf(keyword);
           let name = line.slice(columnIndex).trim().split(" ")[1];
-
           resolve({
             type: keyword,
             name,
@@ -130,7 +123,6 @@ let getDeps = (line, keyword) => {
         if (line.match(keyword)) {
           let columnIndex = line.indexOf(keyword);
           let name = line.slice(columnIndex).trim().split(" ")[1];
-
           resolve({
             type: keyword,
             name,

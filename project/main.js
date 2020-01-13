@@ -1,16 +1,17 @@
 import react from "react"
-const vvv = require("assert")
+import http from "http"
+const assert = require("assert")
 
 export default class main extends gobobo {
   constructor() {
 
   }
 
-  function TOPOTOTO (params) {
+  function fun1 (params) {
     
   }
 
-  function FORAD (params) {
+  function func2 (params) {
     
   }
 }

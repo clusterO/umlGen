@@ -2,11 +2,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dependency Graph</title>
-    <link rel="stylesheet" type="text/css" href="./index.css" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <title>UML Gen</title>
   </head>
   <body>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script src="./index.js"></script>
+    <section class="container">
+      <div class="one">
+        <h3
+          style="
+            color: #ff4411;
+            font-size: 18px;
+            font-family: 'Signika', sans-serif;
+            padding-bottom: 10px;
+          "
+        >
+          CLASS DIAGRAM
+        </h3>
+        <iframe
+          style="border: none"
+          width="650px"
+          height="110%"
+          src="./class.html"
+        ></iframe>
+      </div>
+
+      <div
+        style="
+          color: #ff4411;
+          font-size: 18px;
+          font-family: 'Signika', sans-serif;
+          padding-bottom: 10px;
+        "
+        class="two"
+      >
+        <h3>DEPENDENCY GRAPH</h3>
+        <iframe
+          style="border: none"
+          width="650px"
+          height="110%"
+          src="./dependency.html"
+        ></iframe>
+      </div>
+    </section>
   </body>
 </html>
