@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 
 let extractDepGraphLinks = data => {
@@ -18,7 +18,7 @@ let extractDepGraphLinks = data => {
   return links;
 };
 
-extractClassLinks = data => {
+let extractClassLinks = data => {
   let links = [];
 
   return new Promise(resolve => {
@@ -26,17 +26,9 @@ extractClassLinks = data => {
       element.depInfos.forEach(dep => {
         if (dep.type === "class") {
           let className = dep.name;
-          for (let i = 0; i < data.length; ++i)
-            for (let j = 0; j < data[i].depInfos.length; ++j)
-              if (
-                (data[i].depInfos[j].type === "import" ||
-                  data[i].depInfos[j].type === "require") &&
-                data[i].depInfos[j].name === className
-              )
-                links.push({
-                  source: className,
-                  target: data[i].fileName.split(".")[0],
-                });
+          findClassInImports(data, className).then(link => {
+            links.push(link);
+          });
         }
       });
     });
@@ -44,25 +36,41 @@ extractClassLinks = data => {
   });
 };
 
-let generateHtml = (links, type) => {
+let findClassInImports = (data, className) => {
   return new Promise(resolve => {
+    for (let i = 0; i < data.length; ++i)
+      for (let j = 0; j < data[i].depInfos.length; ++j)
+        if (
+          (data[i].depInfos[j].type === "import" ||
+            data[i].depInfos[j].type === "require") &&
+          data[i].depInfos[j].name === className
+        )
+          resolve({
+            source: className,
+            target: data[i].fileName.split(".")[0],
+          });
+  });
+};
+
+let generateHtml = (links, type) => {
+  return new Promise((resolve, reject) => {
     let page = `let links = ${JSON.stringify(links)}; \r\n`;
     let filePath = "";
 
-    if (type === "class") {
-      fs.writeFile("./class.js", page, err => {});
-      filePath = path.join(__dirname, "class.js");
-    } else {
-      fs.writeFile("./dependency.js", page, err => {});
-      filePath = path.join(__dirname, "dependency.js");
-    }
+    type === "class"
+      ? (filePath = path.join(__dirname, "class.js"))
+      : (filePath = path.join(__dirname, "dependency.js"));
 
-    fs.readFile("./graph.js", null, (err, data) => {
-      fs.appendFile(filePath, data, err => {
-        if (err) throw err;
-        resolve();
-      });
-    });
+    fs.writeFile(filePath, page, err => {});
+    fs.readFile("./graph.js", null)
+      .then(data => {
+        fs.appendFile(filePath, data)
+          .then(() => {
+            resolve();
+          })
+          .catch(err => reject(err));
+      })
+      .catch(err => reject(err));
   });
 };
 
